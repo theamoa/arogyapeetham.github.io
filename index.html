@@ -1,1010 +1,733 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ārogya Peetham - Holistic Health & Wellness Center</title>
+    <title>Harsh Ranjan | Integrative Health & Wellness</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Manrope:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Design System -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fafafa;
-        }
-
         :root {
-            --primary: #0d5f3f;
-            --secondary: #8b5a3c;
-            --accent: #d4a574;
-            --light: #f5f1eb;
-            --dark: #1a1a1a;
-            --text: #444;
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --color-bg: #FDFCF8;
+            --color-sage: #4A5D4F;
+            --color-terra: #C88D72;
+            --color-gold: #D4AF37;
+            --color-charcoal: #1A1A1A;
+        }
+        
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-charcoal);
+            overflow-x: hidden;
         }
 
-        /* ==================== HEADER & NAVIGATION ==================== */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1.2rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+        .font-display { font-family: 'Cormorant Garamond', serif; }
+        .font-decorative { font-family: 'Cinzel Decorative', cursive; }
+        
+        /* Smooth Reveal Animations */
+        .reveal-up { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
 
-        .navbar {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
+        /* Calendar Styles */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .calendar-day { 
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
         }
+        .calendar-day:hover:not(.disabled) { background: #e5e7eb; }
+        .calendar-day.selected { background: var(--color-terra); color: white; }
+        .calendar-day.disabled { color: #ccc; cursor: not-allowed; }
 
-        .brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #fff, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        /* Chat Widget Animation */
+        .chat-widget {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: bottom right;
+            opacity: 0; pointer-events: none; transform: scale(0.9) translateY(20px);
         }
+        .chat-widget.open { opacity: 1; pointer-events: all; transform: scale(1) translateY(0); }
 
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2.5rem;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        nav a::after {
-            content: '';
+        /* Mandala Background Animation */
+        .mandala-bg {
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 6px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: white;
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        /* ==================== HERO SECTION ==================== */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a7a52 100%);
-            color: white;
-            padding: 120px 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="%23ffffff" opacity="0.05"/></svg>');
-            background-size: cover;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 800;
-            line-height: 1.2;
-        }
-
-        .hero .subtitle {
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            font-weight: 300;
-            opacity: 0.95;
-        }
-
-        .hero .tagline {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        .cta-primary {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--primary);
-            padding: 14px 40px;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-weight: 700;
-            font-size: 1rem;
-            transition: var(--transition);
-            border: 2px solid var(--accent);
-            cursor: pointer;
-        }
-
-        .cta-primary:hover {
-            background: transparent;
-            color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* ==================== SERVICES SECTION ==================== */
-        .services-section {
-            padding: 100px 2rem;
-            background: var(--light);
-        }
-
-        .section-header {
-            max-width: 1200px;
-            margin: 0 auto 4rem;
-            text-align: center;
-        }
-
-        .section-header h2 {
-            font-size: 2.8rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-weight: 800;
-        }
-
-        .section-header p {
-            font-size: 1.1rem;
-            color: var(--text);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .services-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-        }
-
-        .service-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
-            border-top: 5px solid var(--accent);
-            position: relative;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--accent), var(--secondary));
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-        }
-
-        .service-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .service-card h3 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .service-card p {
-            color: var(--text);
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        /* ==================== ABOUT SECTION ==================== */
-        .about-section {
-            padding: 100px 2rem;
-            background: white;
-        }
-
-        .about-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .about-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .about-text h2 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .about-text p {
-            color: var(--text);
-            margin-bottom: 1.5rem;
-            line-height: 1.9;
-            font-size: 0.95rem;
-        }
-
-        .about-image-box {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            height: 400px;
-            width: 100%;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 4rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .about-image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* ==================== FOUNDER SECTION ==================== */
-        .founder-section {
-            padding: 100px 2rem;
-            background: var(--light);
-        }
-
-        .founder-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 3.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .founder-header {
-            display: flex;
-            align-items: center;
-            gap: 2.5rem;
-            margin-bottom: 2rem;
-        }
-
-        /* PERFECT CIRCULAR PHOTO STYLING */
-        .founder-avatar {
-            width: 180px;
-            height: 180px;
-            min-width: 180px;
-            border-radius: 50%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .founder-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-            border-radius: 50%;
-        }
-
-        .founder-info h3 {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            font-weight: 800;
-        }
-
-        .founder-title {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .founder-role {
-            color: var(--text);
-            font-size: 0.95rem;
-        }
-
-        .credentials-box {
-            background: linear-gradient(135deg, var(--light), white);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--accent);
-        }
-
-        .credentials-box strong {
-            color: var(--primary);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .founder-bio {
-            color: var(--text);
-            line-height: 1.9;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
-        /* ==================== DETAILED SERVICES ==================== */
-        .programs-section {
-            padding: 100px 2rem;
-            background: white;
-        }
-
-        .programs-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .program-card {
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--light), white);
-            border-left: 5px solid var(--primary);
-            border-radius: 8px;
-            transition: var(--transition);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .program-card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transform: translateX(5px);
-        }
-
-        .program-card h4 {
-            color: var(--primary);
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-        }
-
-        .program-card p {
-            color: var(--text);
-            font-size: 0.9rem;
-            line-height: 1.7;
-        }
-
-        /* ==================== GLOBAL REACH ==================== */
-        .global-section {
-            padding: 100px 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-
-        .global-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .global-section h2 {
-            font-size: 2.8rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            font-weight: 800;
-        }
-
-        .countries-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 2rem;
-        }
-
-        .country-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: var(--transition);
-        }
-
-        .country-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .country-item p {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        /* ==================== CTA SECTION ==================== */
-        .cta-banner {
-            padding: 80px 2rem;
-            background: var(--accent);
-            text-align: center;
-        }
-
-        .cta-banner h2 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .cta-banner p {
-            color: var(--dark);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.8;
-        }
-
-        .cta-secondary {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 14px 40px;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-weight: 700;
-            font-size: 1rem;
-            transition: var(--transition);
-            border: 2px solid var(--primary);
-            cursor: pointer;
-        }
-
-        .cta-secondary:hover {
-            background: transparent;
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        /* ==================== FOOTER ==================== */
-        footer {
-            background: var(--primary);
-            color: white;
-            padding: 4rem 2rem 2rem;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-col h4 {
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .footer-col p {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0.8rem;
-            line-height: 1.8;
-            font-size: 0.9rem;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-col a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.9rem;
-        }
-
-        .footer-col a:hover {
-            color: var(--accent);
-            padding-left: 5px;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 2rem;
-            margin-top: 2rem;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-
-        /* ==================== ANIMATIONS ==================== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .service-card, .program-card, .country-item {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        /* ==================== RESPONSIVE DESIGN ==================== */
-        @media (max-width: 768px) {
-            nav ul {
-                display: none;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero .subtitle {
-                font-size: 1.1rem;
-            }
-
-            .about-wrapper {
-                grid-template-columns: 1fr;
-            }
-
-            .founder-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 1.5rem;
-            }
-
-            .founder-avatar {
-                width: 140px;
-                height: 140px;
-                min-width: 140px;
-            }
-
-            .section-header h2 {
-                font-size: 2rem;
-            }
-
-            .cta-banner h2 {
-                font-size: 1.8rem;
-            }
-
-            .founder-wrapper {
-                padding: 2rem;
-            }
-
-            .about-image-box {
-                height: 300px;
-            }
-
-            .services-grid, .programs-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero {
-                padding: 80px 1rem;
-            }
-
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .section-header h2 {
-                font-size: 1.6rem;
-            }
-
-            .navbar {
-                padding: 0 1rem;
-            }
-
-            .founder-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .founder-avatar {
-                width: 120px;
-                height: 120px;
-                min-width: 120px;
-            }
-
-            .countries-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .about-wrapper {
-                grid-template-columns: 1fr;
-            }
-        }
+            background-image: url('https://www.transparenttextures.com/patterns/black-scales.png');
+            opacity: 0.03;
+            animation: spin 120s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
-    <!-- HEADER -->
-    <header>
-        <div class="navbar">
-            <div class="brand">Ārogya Peetham</div>
-            <nav>
-                <ul id="navMenu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#founder">Founder</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+<body class="antialiased selection:bg-[#C88D72] selection:text-white">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-6 text-white border-b border-white/10">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="group flex flex-col">
+                <span class="text-2xl font-decorative tracking-wider group-hover:text-[#C88D72] transition duration-300">
+                    Harsh Ranjan
+                </span>
+                <span class="text-[9px] uppercase tracking-[0.4em] opacity-80 text-[#C88D72]">Samarpan</span>
+            </a>
+            
+            <div class="hidden lg:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#about" class="hover:text-[#C88D72] transition">About</a>
+                <a href="#sessions" class="hover:text-[#C88D72] transition">Sessions</a>
+                <a href="#gallery" class="hover:text-[#C88D72] transition">Gallery</a>
+                <a href="#blog" class="hover:text-[#C88D72] transition text-[#C88D72]">Blog</a>
+                <a href="#contact" class="px-6 py-2 border border-white/30 hover:bg-white hover:text-black transition duration-300 rounded-sm">Book Calendar</a>
             </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden"><i data-lucide="menu" class="w-8 h-8"></i></button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="fixed inset-0 bg-[#FDFCF8] text-[#1A1A1A] z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8">
+            <button id="close-menu-btn" class="absolute top-8 right-8"><i data-lucide="x" class="w-8 h-8"></i></button>
+            <a href="#about" class="text-3xl font-display">About</a>
+            <a href="#sessions" class="text-3xl font-display">Sessions</a>
+            <a href="#gallery" class="text-3xl font-display">Gallery</a>
+            <a href="#blog" class="text-3xl font-display">Blog</a>
+            <a href="#contact" class="text-3xl font-display">Book Calendar</a>
+        </div>
+    </nav>
+
+    <!-- Cinematic Header -->
+    <header class="relative w-full h-screen overflow-hidden flex items-center justify-center">
+        <!-- Video: Mantra/Japa/Meditation -->
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover scale-105" style="filter: brightness(0.6);">
+            <source src="https://videos.pexels.com/video-files/3195867/3195867-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        </video>
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-[#FDFCF8] via-transparent to-black/50"></div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mt-16">
+            <div class="reveal-up inline-flex items-center gap-3 px-5 py-2 border border-white/20 rounded-full bg-white/5 backdrop-blur-lg mb-8">
+                <i data-lucide="om" class="w-4 h-4 text-[#C88D72]"></i>
+                <span class="text-white text-[10px] uppercase tracking-[0.3em]">Sacred Science</span>
+            </div>
+            
+            <h1 class="reveal-up text-5xl md:text-7xl lg:text-8xl font-display text-white leading-[1.1] mb-8 drop-shadow-2xl">
+                Embrace Balance Through <br>
+                <span class="italic text-[#C88D72] font-decorative">Ayurveda & Yoga</span>
+            </h1>
+            
+            <p class="reveal-up text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto leading-relaxed mb-12 border-l-2 border-[#C88D72] pl-6 text-left md:text-center md:border-none md:pl-0">
+                Dedicated to integrating traditional knowledge systems with modern scientific research to promote holistic health.
+            </p>
+            
+            <div class="reveal-up flex flex-col sm:flex-row gap-5 justify-center">
+                <a href="#sessions" class="px-10 py-4 bg-[#C88D72] text-white uppercase tracking-widest text-xs font-bold hover:bg-[#A6755E] transition-colors shadow-2xl rounded-sm">
+                    Start Your Journey
+                </a>
+                <a href="#ai-lab" class="px-10 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white uppercase tracking-widest text-xs font-bold hover:bg-white hover:text-black transition-colors rounded-sm flex items-center justify-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Samarpan AI
+                </a>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50 animate-bounce">
+            <i data-lucide="chevrons-down" class="w-6 h-6"></i>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Ārogya Peetham</h1>
-            <p class="subtitle">Center for Integrative Health & Holistic Wellness</p>
-            <p class="tagline">Experience restful comfort and modern amenities amidst nature's tranquility for a truly memorable stay.</p>
-            <a href="#services" class="cta-primary">Explore Services</a>
-        </div>
-    </section>
+    <!-- The "Moving" About Section (Parallax) -->
+    <section id="about" class="py-32 bg-[#FDFCF8] relative overflow-hidden">
+        <!-- Floating Mandala Background -->
+        <div class="mandala-bg w-[800px] h-[800px] top-0 -left-64 rounded-full border border-[#C88D72]/10"></div>
+        
+        <div class="container mx-auto px-6 md:px-12 relative z-10">
+            <div class="flex flex-col lg:flex-row gap-20 items-center">
+                
+                <!-- Parallax Image Layering -->
+                <div class="w-full lg:w-1/2 relative h-[700px] flex items-center justify-center">
+                    <!-- Back Image (Blurred/Texture) -->
+                    <div class="absolute top-0 right-0 w-3/4 h-3/4 bg-[#EAE8E4] rounded-t-full rounded-b-full overflow-hidden opacity-80" data-speed="0.2">
+                        <img src="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=800&q=80" class="w-full h-full object-cover opacity-60 grayscale">
+                    </div>
+                    
+                    <!-- Main Portrait (Sharp) -->
+                    <div class="absolute bottom-10 left-0 w-3/4 h-3/4 overflow-hidden rounded-t-full rounded-b-[100px] shadow-2xl z-10" data-speed="0.5">
+                        <img src="https://images.unsplash.com/photo-1544367563-12123d8965cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Harsh Ranjan" class="w-full h-full object-cover">
+                    </div>
 
-    <!-- SERVICES SECTION -->
-    <section id="services" class="services-section">
-        <div class="section-header">
-            <h2>Our Services</h2>
-            <p>Comprehensive wellness programs combining ancient wisdom with modern scientific research</p>
-        </div>
-        <div class="services-grid">
-            <div class="service-card">
-                <span class="service-icon">🌿</span>
-                <h3>Ayurveda</h3>
-                <p>Traditional healing wisdom combining ancient Ayurvedic principles with personalized wellness protocols for optimal health and longevity.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🧘</span>
-                <h3>Yoga Retreat</h3>
-                <p>Comprehensive yoga programs designed for wellness and preventive health care, combining asanas, pranayama, and meditation practices.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🧠</span>
-                <h3>Meditation</h3>
-                <p>Guided meditation sessions to calm the mind, reduce stress, and cultivate inner peace and consciousness through evidence-based practices.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">💬</span>
-                <h3>Counselling</h3>
-                <p>Integrative psychological counselling combining modern psychology with holistic wellness approaches for mental and emotional well-being.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🔬</span>
-                <h3>Detoxification</h3>
-                <p>Scientific detoxification programs based on Ayurvedic principles, designed to cleanse and rejuvenate your body naturally.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">❤️</span>
-                <h3>Preventive Health Care</h3>
-                <p>Holistic preventive approaches addressing neurological health, wellness, and consciousness through personalized integrative programs.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ABOUT SECTION -->
-    <section id="about" class="about-section">
-        <div class="about-container">
-            <div class="section-header">
-                <h2>About Ārogya Peetham</h2>
-            </div>
-            <div class="about-wrapper">
-                <div class="about-text">
-                    <h2>Holistic Health Through Integration</h2>
-                    <p>Founded by Harsh Ranjan Samarpan, Ārogya Peetham provides tools of holistic health through a multidimensional approach, with Ayurveda and Yoga at its core.</p>
-                    <p>Passionate about preventive healthcare, rehabilitation, consciousness, and yoga, we established evidence-based protocols for neurological disease management and founded the Kaivalyam Foundation to promote health and wellness through yoga, oriental philosophy, and research.</p>
-                    <p>Our mission is to bridge the profound wisdom of ancient healing traditions with the precision of modern scientific research, making holistic wellness accessible to everyone, everywhere.</p>
+                    <!-- Floating Badge -->
+                    <div class="absolute bottom-20 -right-4 bg-white p-6 shadow-xl z-20 border-l-4 border-[#4A5D4F]" data-speed="0.8">
+                        <p class="font-decorative text-xl text-[#1A1A1A]">Harsh Ranjan</p>
+                        <p class="text-[10px] uppercase tracking-widest text-[#4A5D4F] mt-1">Scholar-Practitioner</p>
+                    </div>
                 </div>
-                <div class="about-image-box">
-                    <!-- UPLOAD center.jpg TO GITHUB FOR THIS TO SHOW -->
-                    <img src="center.jpg" alt="Ārogya Peetham Wellness Center">
+
+                <!-- Text & Credentials -->
+                <div class="w-full lg:w-1/2 reveal-up">
+                    <span class="text-[#C88D72] uppercase tracking-widest text-xs font-bold mb-4 block">The Alchemist's Path</span>
+                    
+                    <h2 class="text-5xl md:text-6xl font-display text-[#1A1A1A] mb-8 leading-tight">
+                        Bridging <span class="italic text-[#4A5D4F]">Sanskrit Wisdom</span> with <span class="italic text-[#C88D72]">Modern Biology</span>
+                    </h2>
+                    
+                    <p class="text-gray-600 mb-6 leading-relaxed text-lg font-light">
+                        My practice is not just about health; it is about *wholeness*. I hold a unique convergence of degrees that allows me to read your bloodwork with the precision of a scientist and interpret your spirit with the depth of a Vedic scholar.
+                    </p>
+
+                    <div class="space-y-6 mt-10 border-l border-gray-200 pl-8 relative">
+                        <div class="absolute -left-1.5 top-2 w-3 h-3 bg-[#4A5D4F] rounded-full"></div>
+                        <div class="absolute -left-1.5 top-24 w-3 h-3 bg-[#C88D72] rounded-full"></div>
+                        <div class="absolute -left-1.5 top-48 w-3 h-3 bg-[#D4AF37] rounded-full"></div>
+
+                        <div class="reveal-up">
+                            <h4 class="font-bold text-[#1A1A1A] font-display text-xl">Ayurveda Biology & Neurobiology</h4>
+                            <p class="text-sm text-gray-500 uppercase tracking-wide mt-1">BSc (2024) • BA Hons Psychology (2025)</p>
+                            <p class="text-gray-600 text-sm mt-2">Integrating classical texts with neural mechanisms of wellness.</p>
+                        </div>
+
+                        <div class="reveal-up">
+                            <h4 class="font-bold text-[#1A1A1A] font-display text-xl">Sanskrit & Vedic Studies</h4>
+                            <p class="text-sm text-gray-500 uppercase tracking-wide mt-1">Certificate (2024) • Diploma (2025)</p>
+                            <p class="text-gray-600 text-sm mt-2">Accessing source wisdom directly from ancient scriptures.</p>
+                        </div>
+
+                        <div class="reveal-up">
+                            <h4 class="font-bold text-[#1A1A1A] font-display text-xl">Advanced Tantra & Nutrition</h4>
+                            <p class="text-sm text-gray-500 uppercase tracking-wide mt-1">Tatwa Shuddhi • Vigyan Bhairav Tantra</p>
+                            <p class="text-gray-600 text-sm mt-2">Public Health Nutrition certified. Certified Yoga Instructor.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FOUNDER SECTION -->
-    <section id="founder" class="founder-section">
-        <div class="section-header">
-            <h2>Meet Our Founder</h2>
-        </div>
-        <div class="founder-wrapper">
-            <div class="founder-header">
-                <div class="founder-avatar">
-                    <!-- UPLOAD founder.jpg TO GITHUB FOR THIS TO SHOW -->
-                    <img src="founder.jpg" alt="Harsh Ranjan Samarpan - Founder">
-                </div>
-                <div class="founder-info">
-                    <h3>Harsh Ranjan Samarpan</h3>
-                    <div class="founder-title">Founder & Director</div>
-                    <div class="founder-role">Center for Integrative Health</div>
-                </div>
+    <!-- Sessions Section (WITH PHOTOS) -->
+    <section id="sessions" class="py-24 bg-[#1A1A1A] text-white">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="text-center mb-20 reveal-up">
+                <span class="text-[#C88D72] uppercase tracking-widest text-xs font-bold block mb-4">Offerings</span>
+                <h2 class="text-4xl md:text-6xl font-display mb-4">Personalized Wellness</h2>
+                <p class="text-white/60 font-light max-w-xl mx-auto">Tailored to your constitution (Prakriti) and current state (Vikriti).</p>
             </div>
-            <div class="credentials-box">
-                <strong>Qualifications & Expertise:</strong><br>
-                Ayurveda Biology • Psychology • Neuroscience • Nutrition • Certified Yoga Instructor • Sanskrit Scholar
-            </div>
-            <p class="founder-bio">I'm Harsh Ranjan (Samarpan) — an interdisciplinary scholar-practitioner specializing in Ayurveda Biology with parallel studies in Psychology, Yoga, and Sanskrit. My mission is to bridge the profound wisdom of ancient healing traditions with the precision of modern scientific research, making holistic wellness accessible to everyone, everywhere.</p>
-            <p class="founder-bio">Through Ārogya Peetham – Center for Integrative Health, I serve a diverse global community spanning India, USA, Singapore, Netherlands, UK, Canada, and Australia. Whether you're managing stress in New York, seeking balance in Singapore, or exploring wellness in Mumbai, I provide personalized integrative health programs that respect your cultural context and lifestyle.</p>
-        </div>
-    </section>
 
-    <!-- PROGRAMS SECTION -->
-    <section class="programs-section">
-        <div class="section-header">
-            <h2>Complete Wellness Programs</h2>
-            <p>Tailored programs designed for your unique wellness journey</p>
-        </div>
-        <div class="programs-grid">
-            <div class="program-card">
-                <h4>Ayurveda Consultations</h4>
-                <p>Personalized Ayurvedic health assessments and treatment plans tailored to your unique constitution and health goals.</p>
-            </div>
-            <div class="program-card">
-                <h4>Yoga & Movement</h4>
-                <p>Customized yoga programs for flexibility, strength, balance, and spiritual development at all experience levels.</p>
-            </div>
-            <div class="program-card">
-                <h4>Detox Retreats</h4>
-                <p>Intensive rejuvenation programs combining Ayurveda, yoga, and modern wellness protocols for complete renewal.</p>
-            </div>
-            <div class="program-card">
-                <h4>Meditation Training</h4>
-                <p>Evidence-based meditation techniques for stress reduction, mental clarity, and emotional resilience.</p>
-            </div>
-            <div class="program-card">
-                <h4>Nutritional Guidance</h4>
-                <p>Ayurvedic nutrition counselling integrated with modern nutritional science for optimal wellness.</p>
-            </div>
-            <div class="program-card">
-                <h4>Corporate Wellness</h4>
-                <p>Tailored wellness programs for organizations promoting employee health, productivity, and well-being.</p>
-            </div>
-        </div>
-    </section>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1: Ayurveda -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Ayurveda Consultations</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Dietary recommendations, herbal remedies, and lifestyle practices rooted in classical wisdom.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
+                </div>
 
-    <!-- GLOBAL REACH SECTION -->
-    <section class="global-section">
-        <div class="global-container">
-            <h2>Serving Global Communities</h2>
-            <div class="countries-grid">
-                <div class="country-item">
-                    <p>🇮🇳<br>India</p>
+                <!-- Card 2: Psychology -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Counseling Sessions</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Integrating psychology, mindfulness, and spiritual insights for genuine transformation.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
                 </div>
-                <div class="country-item">
-                    <p>🇺🇸<br>USA</p>
+
+                <!-- Card 3: Nutrition -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Nutrition Planning</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Evidence-informed meal planning combining Ayurvedic principles with modern science.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
                 </div>
-                <div class="country-item">
-                    <p>🇸🇬<br>Singapore</p>
+
+                <!-- Card 4: Yoga -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1599447421405-0c1a1143683f?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Yoga Sessions</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Practices designed to build strength, enhance flexibility, and cultivate profound calm.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
                 </div>
-                <div class="country-item">
-                    <p>🇳🇱<br>Netherlands</p>
+
+                <!-- Card 5: Meditation -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Meditation</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Techniques for mental clarity, emotional stability, and spiritual growth.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
                 </div>
-                <div class="country-item">
-                    <p>🇬🇧<br>UK</p>
-                </div>
-                <div class="country-item">
-                    <p>🇨🇦<br>Canada</p>
-                </div>
-                <div class="country-item">
-                    <p>🇦🇺<br>Australia</p>
+
+                <!-- Card 6: Mantra -->
+                <div class="group relative rounded-xl overflow-hidden cursor-pointer h-[450px] reveal-up">
+                    <img src="https://images.unsplash.com/photo-1602192509153-0b72636bb0d5?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8 flex flex-col justify-end">
+                        <h3 class="text-2xl font-display mb-2">Mantra Sessions</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Experience the transformative power of sacred sounds to uplift the spirit.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold uppercase tracking-widest text-[#C88D72] hover:text-white transition">Book Now →</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA SECTION -->
-    <section class="cta-banner">
-        <h2>Ready to Begin Your Wellness Journey?</h2>
-        <p>Join us at Ārogya Peetham and experience the transformative power of integrative health. Discover your path to holistic wellness today.</p>
-        <a href="#contact" class="cta-secondary">Get In Touch</a>
+    <!-- Gallery Section (New!) -->
+    <section id="gallery" class="py-24 bg-[#FAFAF8]">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="text-center mb-16 reveal-up">
+                <span class="text-[#C88D72] uppercase tracking-widest text-xs font-bold block mb-4">Gallery</span>
+                <h2 class="text-4xl md:text-5xl font-display text-[#1A1A1A]">Moments from the Journey</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 h-[600px] md:h-[500px]">
+                <div class="col-span-2 row-span-2 relative overflow-hidden rounded-sm reveal-up">
+                    <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80" class="w-full h-full object-cover hover:scale-110 transition duration-700">
+                </div>
+                <div class="relative overflow-hidden rounded-sm reveal-up">
+                    <img src="https://images.unsplash.com/photo-1606914509854-139a3d402476?w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition duration-700">
+                </div>
+                <div class="relative overflow-hidden rounded-sm reveal-up">
+                    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80" class="w-full h-full object-cover hover:scale-110 transition duration-700">
+                </div>
+                <div class="col-span-2 relative overflow-hidden rounded-sm reveal-up">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" class="w-full h-full object-cover hover:scale-110 transition duration-700">
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer id="contact">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>Ārogya Peetham</h4>
-                    <p>Center for Integrative Health & Holistic Wellness</p>
-                    <p>Serving global communities with ancient wisdom and modern science.</p>
+    <!-- AI Lab Section -->
+    <section id="ai-lab" class="bg-[#EAE8E4] py-24 relative overflow-hidden">
+        <div class="container mx-auto px-6 md:px-12 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal-up">
+                <div class="md:w-1/2">
+                    <h2 class="text-4xl md:text-5xl font-display text-[#2C2C2C] mb-4">Samarpan AI ✨</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        My digital twin. Ask about Doshas, Dreams, or Recipes. Trained on my methodology.
+                    </p>
                 </div>
-                <div class="footer-col">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="#services">Ayurveda</a></li>
-                        <li><a href="#services">Yoga Retreat</a></li>
-                        <li><a href="#services">Meditation</a></li>
-                        <li><a href="#services">Counselling</a></li>
-                        <li><a href="#services">Detoxification</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#founder">Founder</a></li>
-                        <li><a href="#services">Services</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Contact Info</h4>
-                    <p>Email: justtheself@gmail.com</p>
-                    <p>Phone: +91 96614 86740</p>
-                    <p>Location: India, USA, Singapore, Netherlands, UK, Canada, Australia</p>
+                
+                <div class="flex gap-8 mt-8 md:mt-0 text-sm uppercase tracking-widest text-[#4A5D4F] border-b border-gray-300 w-full md:w-auto overflow-x-auto">
+                    <button class="ai-tab active pb-4 hover:text-[#2C2C2C]" onclick="switchTab('chef')">Nutrition</button>
+                    <button class="ai-tab pb-4 hover:text-[#2C2C2C]" onclick="switchTab('body')">Dosha</button>
+                    <button class="ai-tab pb-4 hover:text-[#2C2C2C]" onclick="switchTab('mind')">Dreams</button>
+                    <button class="ai-tab pb-4 hover:text-[#2C2C2C]" onclick="switchTab('mantra')">Mantra</button>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Ārogya Peetham - Center for Integrative Health. All rights reserved.</p>
-                <p>Bridging Ancient Wisdom with Modern Science</p>
+
+            <div class="bg-white rounded-xl shadow-2xl overflow-hidden min-h-[500px] flex flex-col md:flex-row reveal-up">
+                <!-- Dynamic Input Panel -->
+                <div id="ai-input-panel" class="md:w-5/12 p-10 text-white flex flex-col relative transition-colors duration-500 bg-[#3A4A3F]">
+                    <div class="mb-auto">
+                        <div id="ai-icon" class="mb-6 opacity-80"><i data-lucide="chef-hat" class="w-12 h-12"></i></div>
+                        <h3 id="ai-title" class="font-display text-3xl mb-2">The Sattvic Chef</h3>
+                        <p id="ai-desc" class="text-white/70 text-sm font-light">Enter ingredients. Get a balanced recipe.</p>
+                    </div>
+                    <div class="mt-8">
+                        <textarea id="ai-input" class="w-full bg-white/10 border border-white/20 rounded-lg p-4 text-white placeholder-white/40 focus:outline-none focus:border-white text-sm mb-4 resize-none h-32" placeholder="Lentils, spinach, turmeric..."></textarea>
+                        <button onclick="handleAiSubmit()" class="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-gray-100 transition rounded flex justify-center items-center gap-2">
+                            Generate <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Panel -->
+                <div class="md:w-7/12 p-10 bg-white relative overflow-y-auto max-h-[600px]">
+                    <div id="ai-output" class="prose prose-stone prose-sm max-w-none">
+                        <div class="flex flex-col items-center justify-center h-full text-gray-300 mt-20">
+                            <i data-lucide="sparkles" class="w-10 h-10 mb-4 opacity-50"></i>
+                            <p class="text-sm font-light">Insight awaits...</p>
+                        </div>
+                    </div>
+                    <div id="ai-loader" class="absolute inset-0 bg-white/90 flex items-center justify-center hidden z-20">
+                        <div class="animate-pulse text-[#C88D72] text-xs uppercase tracking-widest font-bold">Consulting Ancient Texts...</div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="bg-[#FDFCF8] py-24">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="text-center mb-16 reveal-up">
+                <span class="text-[#C88D72] uppercase tracking-widest text-xs font-bold block mb-4">Journal</span>
+                <h2 class="text-4xl md:text-5xl font-display text-[#1A1A1A]">Insights & Research</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Post 1 -->
+                <div class="group cursor-pointer reveal-up bg-white p-4 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
+                    <div class="overflow-hidden rounded-lg h-56 mb-6">
+                        <img src="https://images.unsplash.com/photo-1528319725582-ddc096101511?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    </div>
+                    <h3 class="text-2xl font-display text-[#1A1A1A] mb-3 group-hover:text-[#C88D72] transition-colors">Neurobiology of Chanting</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">How Sanskrit mantras affect the vagus nerve and default mode network.</p>
+                    <a href="#" class="inline-block px-4 py-2 border border-[#1A1A1A] text-[#1A1A1A] text-xs font-bold uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition rounded-sm">Read Full Article</a>
+                </div>
+                <!-- Post 2 -->
+                <div class="group cursor-pointer reveal-up bg-white p-4 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
+                    <div class="overflow-hidden rounded-lg h-56 mb-6">
+                        <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    </div>
+                    <h3 class="text-2xl font-display text-[#1A1A1A] mb-3 group-hover:text-[#C88D72] transition-colors">Circadian Rhythms</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Aligning your molecular clock with ancient daily routines.</p>
+                    <a href="#" class="inline-block px-4 py-2 border border-[#1A1A1A] text-[#1A1A1A] text-xs font-bold uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition rounded-sm">Read Full Article</a>
+                </div>
+                <!-- Post 3 -->
+                <div class="group cursor-pointer reveal-up bg-white p-4 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
+                    <div class="overflow-hidden rounded-lg h-56 mb-6">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    </div>
+                    <h3 class="text-2xl font-display text-[#1A1A1A] mb-3 group-hover:text-[#C88D72] transition-colors">Gut-Brain Axis</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Understanding 'Agni' through the lens of microbiome research.</p>
+                    <a href="#" class="inline-block px-4 py-2 border border-[#1A1A1A] text-[#1A1A1A] text-xs font-bold uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition rounded-sm">Read Full Article</a>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="#" class="px-8 py-3 border border-[#4A5D4F] text-[#4A5D4F] uppercase tracking-widest text-xs font-bold hover:bg-[#4A5D4F] hover:text-white transition rounded-sm">View All Articles</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTEGRATED CALENDAR & BOOKING -->
+    <section id="contact" class="bg-[#4A5D4F] text-white py-24">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="grid lg:grid-cols-2 gap-16">
+                <!-- Info -->
+                <div class="reveal-up">
+                    <h2 class="text-4xl md:text-5xl font-display mb-6">Secure Your Time</h2>
+                    <p class="text-white/80 font-light text-lg mb-8">
+                        Select a date below to initiate a booking request. I will confirm via email.
+                    </p>
+                    <div class="space-y-4 text-sm tracking-wide">
+                        <p><i data-lucide="mail" class="w-4 h-4 inline mr-2"></i> justtheself@gmail.com</p>
+                        <p><i data-lucide="globe" class="w-4 h-4 inline mr-2"></i> Online & In-person (India/USA)</p>
+                    </div>
+                </div>
+
+                <!-- Calendar Widget -->
+                <div class="bg-white text-[#1A1A1A] rounded-2xl p-8 shadow-2xl reveal-up">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-lg" id="currentMonth">October 2025</h3>
+                        <div class="flex gap-2">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="changeMonth(-1)"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="changeMonth(1)"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Days Header -->
+                    <div class="grid grid-cols-7 gap-2 mb-4 text-xs font-bold text-center text-gray-400">
+                        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                    </div>
+                    
+                    <!-- Calendar Days -->
+                    <div id="calendar-days" class="calendar-grid mb-6">
+                        <!-- JS injects days here -->
+                    </div>
+
+                    <!-- Time Slots (Hidden until date picked) -->
+                    <div id="time-slots" class="hidden border-t pt-6">
+                        <p class="text-xs font-bold uppercase tracking-widest text-[#C88D72] mb-3">Select Time</p>
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <button class="p-2 border rounded hover:bg-[#4A5D4F] hover:text-white text-xs transition" onclick="selectTime('10:00 AM')">10:00 AM</button>
+                            <button class="p-2 border rounded hover:bg-[#4A5D4F] hover:text-white text-xs transition" onclick="selectTime('02:00 PM')">02:00 PM</button>
+                            <button class="p-2 border rounded hover:bg-[#4A5D4F] hover:text-white text-xs transition" onclick="selectTime('04:00 PM')">04:00 PM</button>
+                        </div>
+                    </div>
+
+                    <!-- Booking Form -->
+                    <form id="bookingForm" onsubmit="handleBooking(event)" class="space-y-4 border-t pt-6">
+                        <input type="text" id="name" placeholder="Your Name" class="w-full bg-[#FAFAF8] border border-gray-200 p-3 text-sm rounded outline-none focus:border-[#C88D72]" required>
+                        <select id="serviceType" class="w-full bg-[#FAFAF8] border border-gray-200 p-3 text-sm rounded outline-none focus:border-[#C88D72]">
+                            <option>Ayurveda Consultation</option>
+                            <option>Psychology Session</option>
+                            <option>Nutrition Planning</option>
+                            <option>Yoga Therapy</option>
+                            <option>Mantra Session</option>
+                        </select>
+                        <button class="w-full py-4 bg-[#C88D72] text-white font-bold text-xs uppercase tracking-widest hover:bg-[#A6755E] transition rounded shadow-lg">
+                            Confirm Appointment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#121212] text-white pt-24 pb-12 border-t border-white/5">
+        <div class="container mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-2">
+                <h2 class="text-2xl font-decorative mb-4">Harsh Ranjan</h2>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
+                    Interdisciplinary scholar-practitioner bridging ancient wisdom with modern science.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Links</h4>
+                <ul class="space-y-3 text-sm text-gray-300">
+                    <li><a href="#sessions" class="hover:text-[#C88D72]">Sessions</a></li>
+                    <li><a href="#blog" class="hover:text-[#C88D72]">Blog</a></li>
+                    <li><a href="#ai-lab" class="hover:text-[#C88D72]">AI Tools</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Connect</h4>
+                <ul class="space-y-3 text-sm text-gray-300">
+                    <li>justtheself@gmail.com</li>
+                    <li>@samarpan_wellness</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="container mx-auto px-6 pt-8 border-t border-white/10 text-center text-xs text-gray-600">
+            <p>© 2025 Harsh Ranjan (Samarpan). All Rights Reserved.</p>
         </div>
     </footer>
 
+    <!-- Chat Widget -->
+    <button onclick="toggleChat()" class="fixed bottom-8 right-8 w-14 h-14 bg-[#1A1A1A] border border-[#C88D72] text-[#C88D72] rounded-full shadow-2xl z-50 flex items-center justify-center hover:scale-110 transition duration-300">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
+    </button>
+
+    <div id="chat-window" class="chat-widget fixed bottom-28 right-8 w-80 sm:w-96 bg-white rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200" style="height: 500px;">
+        <div class="bg-[#1A1A1A] p-4 flex justify-between items-center text-white">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-[#C88D72] flex items-center justify-center text-black font-bold text-xs">HR</div>
+                <div>
+                    <h4 class="font-display text-sm">Samarpan AI</h4>
+                    <p class="text-[10px] text-green-400 uppercase tracking-widest">● Online</p>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-white/50 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-[#FAFAF8] space-y-3">
+            <div class="flex justify-start">
+                <div class="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 max-w-[85%]">
+                    Namaste. I am Samarpan AI. I bridge ancient wisdom with modern science. How can I help you find balance today?
+                </div>
+            </div>
+        </div>
+
+        <form onsubmit="handleChatSubmit(event)" class="p-3 bg-white border-t border-gray-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Ask me anything..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#C88D72]">
+            <button type="submit" class="w-10 h-10 bg-[#1A1A1A] text-white rounded-full flex items-center justify-center hover:bg-[#C88D72] transition-colors"><i data-lucide="send" class="w-4 h-4"></i></button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        // --- CALENDAR LOGIC ---
+        let selectedDate = null;
+        let selectedTime = null;
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let currentDate = new Date();
 
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('navMenu');
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days');
+            grid.innerHTML = "";
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
 
-        if (hamburger) {
-            hamburger.addEventListener('click', function() {
-                navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
-            });
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`;
+
+            for(let i=1; i<=daysInMonth; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = "calendar-day";
+                dayDiv.innerText = i;
+                dayDiv.onclick = () => {
+                    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    dayDiv.classList.add('selected');
+                    selectedDate = `${monthNames[month]} ${i}, ${year}`;
+                    document.getElementById('time-slots').classList.remove('hidden');
+                };
+                grid.appendChild(dayDiv);
+            }
         }
 
-        // Close menu when link clicked
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (navMenu) navMenu.style.display = 'none';
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function selectTime(time) {
+            selectedTime = time;
+            alert(`Selected: ${time}`);
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const type = document.getElementById('serviceType').value;
+            
+            if(!selectedDate || !selectedTime) {
+                alert("Please select a date and time from the calendar.");
+                return;
+            }
+
+            const subject = `Booking Request: ${type} with ${name}`;
+            const body = `Name: ${name}%0D%0AService: ${type}%0D%0ADate: ${selectedDate}%0D%0ATime: ${selectedTime}%0D%0A%0D%0APlease confirm availability.`;
+            window.location.href = `mailto:justtheself@gmail.com?subject=${subject}&body=${body}`;
+        }
+
+        // --- GENERAL LOGIC ---
+        lucide.createIcons();
+        const apiKey = ""; 
+        const apiModel = "gemini-2.5-flash-preview-09-2025";
+        let activeTab = 'chef';
+
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.reveal-up').forEach(elem => {
+            gsap.fromTo(elem, { opacity: 0, y: 40 }, {
+                opacity: 1, y: 0, duration: 1,
+                scrollTrigger: { trigger: elem, start: "top 85%" }
             });
         });
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.service-card, .program-card, .country-item').forEach(el => {
-            el.style.opacity = '0';
-            observer.observe(el);
-        });
-
-        // Active nav link on scroll
+        // Navbar Scroll
         window.addEventListener('scroll', () => {
-            let current = '';
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (window.pageYOffset >= sectionTop - 200) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            document.querySelectorAll('nav a').forEach(link => {
-                link.style.borderBottom = 'none';
-                if (link.getAttribute('href').slice(1) === current) {
-                    link.style.borderBottom = '2px solid var(--accent)';
-                }
-            });
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'py-4', 'text-[#1A1A1A]');
+                nav.classList.remove('bg-transparent', 'py-6', 'text-white', 'border-white/10');
+            } else {
+                nav.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'py-4', 'text-[#1A1A1A]');
+                nav.classList.add('bg-transparent', 'py-6', 'text-white', 'border-white/10');
+            }
         });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => mobileMenu.classList.remove('translate-x-full'));
+        closeMenuBtn.addEventListener('click', () => mobileMenu.classList.add('translate-x-full'));
+        document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.add('translate-x-full')));
+
+        // AI Logic
+        function switchTab(tab) {
+            activeTab = tab;
+            document.querySelectorAll('.ai-tab').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            const panel = document.getElementById('ai-input-panel');
+            const icon = document.getElementById('ai-icon');
+            const title = document.getElementById('ai-title');
+            const desc = document.getElementById('ai-desc');
+            const input = document.getElementById('ai-input');
+            const output = document.getElementById('ai-output');
+            output.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-300 mt-20"><i data-lucide="sparkles" class="w-10 h-10 mb-4 opacity-50"></i><p class="text-sm font-light">Result will appear here</p></div>`;
+            lucide.createIcons();
+            
+            // Tab Styles
+            if(tab === 'chef') {
+                panel.className = "md:w-5/12 p-10 text-white flex flex-col relative transition-colors duration-500 bg-[#3A4A3F]";
+                icon.innerHTML = `<i data-lucide="chef-hat" class="w-12 h-12"></i>`;
+                title.innerText = "The Sattvic Chef";
+                desc.innerText = "Enter pantry ingredients. Get a recipe that balances Agni.";
+                input.placeholder = "Lentils, spinach, turmeric...";
+            } else if(tab === 'body') {
+                panel.className = "md:w-5/12 p-10 text-white flex flex-col relative transition-colors duration-500 bg-[#C88D72]";
+                icon.innerHTML = `<i data-lucide="activity" class="w-12 h-12"></i>`;
+                title.innerText = "Vikriti Analysis";
+                desc.innerText = "Describe your symptoms. Identify your imbalance.";
+                input.placeholder = "Dry skin, anxious thoughts, cold feet...";
+            } else if(tab === 'mind') {
+                panel.className = "md:w-5/12 p-10 text-white flex flex-col relative transition-colors duration-500 bg-[#1A1A1A]";
+                icon.innerHTML = `<i data-lucide="moon" class="w-12 h-12"></i>`;
+                title.innerText = "Dream Scryer";
+                desc.innerText = "Describe your dream. Receive Jungian & Vedantic insight.";
+                input.placeholder = "I was flying over an ocean...";
+            } else if(tab === 'mantra') {
+                panel.className = "md:w-5/12 p-10 text-white flex flex-col relative transition-colors duration-500 bg-[#5D6D5F]";
+                icon.innerHTML = `<i data-lucide="music" class="w-12 h-12"></i>`;
+                title.innerText = "Mantra Engine";
+                desc.innerText = "Describe your emotional state. Get a Sanskrit sound for healing.";
+                input.placeholder = "I feel scattered and need focus...";
+            }
+            lucide.createIcons();
+        }
+
+        async function callGemini(prompt, sys) {
+            if(!apiKey) return new Promise(r => setTimeout(() => r("<strong>Demo Mode:</strong> Please connect API Key to generate real response."), 1000));
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${apiModel}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: sys }] } })
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating response.";
+            } catch(e) { return "Connection error."; }
+        }
+
+        async function handleAiSubmit() {
+            const input = document.getElementById('ai-input').value;
+            if(!input) return;
+            document.getElementById('ai-loader').classList.remove('hidden');
+            
+            let sys = "";
+            if(activeTab === 'chef') sys = "You are an Ayurvedic Chef. Create a vegetarian Sattvic recipe.";
+            if(activeTab === 'body') sys = "You are an Ayurvedic Doctor. Analyze symptoms for Dosha imbalance.";
+            if(activeTab === 'mind') sys = "You are a Jungian Psychologist & Vedantic Scholar. Interpret dream symbolism.";
+            if(activeTab === 'mantra') sys = "You are a Sanskrit Scholar. Provide a Mantra for the state.";
+
+            const res = await callGemini(input, sys);
+            document.getElementById('ai-output').innerHTML = marked.parse(res);
+            document.getElementById('ai-loader').classList.add('hidden');
+        }
+
+        // Chat Logic
+        function toggleChat() { document.getElementById('chat-window').classList.toggle('open'); }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const msg = input.value;
+            if(!msg) return;
+            const box = document.getElementById('chat-messages');
+            box.innerHTML += `<div class="flex justify-end"><div class="bg-[#C88D72] text-white p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%] shadow-md">${msg}</div></div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+            const loadId = 'load'+Date.now();
+            box.innerHTML += `<div id="${loadId}" class="flex justify-start"><div class="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-xs text-gray-400">Thinking...</div></div>`;
+            box.scrollTop = box.scrollHeight;
+            const res = await callGemini(msg, "You are Harsh Ranjan (Samarpan). You have a BSc in Ayurveda Biology, BA Psychology, and diploma in Sanskrit. Bridge science and spirituality. Be warm, concise, and wise.");
+            document.getElementById(loadId).remove();
+            box.innerHTML += `<div class="flex justify-start"><div class="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 max-w-[85%]">${marked.parse(res)}</div></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Initialize
+        renderCalendar();
     </script>
 </body>
 </html>
